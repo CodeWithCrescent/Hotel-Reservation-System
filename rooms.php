@@ -10,6 +10,14 @@ include "controller/dbconfig.php";
 
 <body>
     <div class="container-xxl bg-white p-0">
+        <?php
+        $id = $_GET['hotel_id'];
+        $sql = $conn->prepare("SELECT * FROM hotels WHERE admin_id = ?");
+        $sql->bind_param('s', $id);
+        $sql->execute();
+        $arr = $sql->get_result();
+        $value = $arr->fetch_assoc();
+        ?>
 
         <?php include "includes/header.php"; ?>
 
@@ -18,11 +26,11 @@ include "controller/dbconfig.php";
         <div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-1.jpg);">
             <div class="container-fluid page-header-inner py-5">
                 <div class="container text-center pb-5">
-                    <h1 class="display-3 text-white mb-3 animated slideInDown">Rooms</h1>
+                    <h1 class="display-3 text-white mb-3 animated slideInDown"><?php echo $value['name']; ?></h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center text-uppercase">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                            <li class="breadcrumb-item"><a href="#"><?php echo $value['name']; ?></a></li>
                             <li class="breadcrumb-item text-white active" aria-current="page">Rooms</li>
                         </ol>
                     </nav>

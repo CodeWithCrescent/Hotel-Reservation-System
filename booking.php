@@ -78,7 +78,7 @@ include "controller/dbconfig.php";
                     </div>
                     <div class="col-lg-6">
                         <div class="wow fadeInUp" data-wow-delay="0.2s">
-                            <form action="controller/app.php?action=book_room&hotel_id=<?php echo $hotel_id . '&hotel_name='.$value['hotel_name'].'&room_id=' . $room_id.'&room_name='.$value['type_name']; ?>" method="POST">
+                            <form action="controller/app.php?action=book_room&hotel_id=<?php echo $hotel_id .'&room_id=' . $room_id; ?>" method="POST">
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">

@@ -41,9 +41,11 @@ include "../controller/dbconfig.php";
 <body>
     <div class="container-xxl bg-white p-0">
         <?php
-        $id = $_SESSION['_id'];
-        $sql = $conn->prepare("SELECT * FROM users WHERE id = ?");
-        $sql->bind_param('s', $id);
+        // $id = $_SESSION['_unique_id'];
+        $id = $_GET['id'];
+        $unique = $_SESSION['_unique_id'];
+        $sql = $conn->prepare("SELECT * FROM hotels WHERE admin_id = ? OR admin_id = ?");
+        $sql->bind_param('ss', $id, $unique);
         $sql->execute();
         $arr = $sql->get_result();
         $value = $arr->fetch_assoc();
@@ -53,7 +55,7 @@ include "../controller/dbconfig.php";
         <div class="container-fluid fixed-top bg-dark px-0">
             <div class="row gx-0">
                 <div class="col-lg-3 bg-dark d-none d-lg-block">
-                    <a href="home.php" class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
+                    <a href="<?php echo $_SESSION['_role'] == 0 ? 'dashboard.php' : 'home.php'; ?>" class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
                         <h1 class="m-0 text-primary text-uppercase">Reservio</h1>
                     </a>
                 </div>
@@ -67,10 +69,14 @@ include "../controller/dbconfig.php";
                         </button>
                         <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                             <div class="navbar-nav mr-auto py-0">
-                                <a href="home.php" class="nav-item nav-link">Room Types</a>
-                                <a href="rooms.php" class="nav-item nav-link">Rooms</a>
-                                <a href="bookings.php" class="nav-item nav-link active">Bookings</a>
-                                <a href="contact.php" class="nav-item nav-link">Contact</a>
+                                <?php if ($_SESSION['_role'] == 0) { ?>
+                                    <a href="dashboard.php" class="nav-item nav-link">Home</a>
+                                <?php } elseif ($_SESSION['_role'] == 1) { ?>
+                                    <a href="hotel.php" class="nav-item nav-link">My Hotel</a>
+                                    <a href="home.php" class="nav-item nav-link">Room Types</a>
+                                    <a href="rooms.php" class="nav-item nav-link">Rooms</a>
+                                    <a href="bookings.php" class="nav-item nav-link active">Bookings</a>
+                                <?php } ?>
                             </div>
                             <a href="../controller/app.php?action=logout" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">LOGOUT<i class="fa fa-arrow-right ms-3"></i></a>
                         </div>
@@ -80,17 +86,16 @@ include "../controller/dbconfig.php";
         </div>
         <!-- Header End -->
 
-
         <!-- Page Header Start -->
         <div class="container-fluid page-header mb-5 mt-5 p-0" style="background-image: url(../img/carousel-1.jpg);">
             <div class="container-fluid page-header-inner py-5">
                 <div class="container text-center pb-5">
-                    <h1 class="display-3 text-white mb-3 animated slideInDown"><?php echo $value['hotel_name']; ?></h1>
+                    <h1 class="display-3 text-white mb-3 animated slideInDown"><?php echo $value['name']; ?></h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center text-uppercase">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#"><?php echo $value['hotel_name']; ?></a></li>
-                            <li class="breadcrumb-item text-white active" aria-current="page">Rooms</li>
+                            <li class="breadcrumb-item"><a href="#"><?php echo $value['name']; ?></a></li>
+                            <li class="breadcrumb-item text-white active" aria-current="page">Bookings</li>
                         </ol>
                     </nav>
                 </div>
@@ -104,37 +109,79 @@ include "../controller/dbconfig.php";
                 <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
                     <h6 class="section-title text-center text-primary text-uppercase"> List of Bookings</h6>
                 </div>
-                <div class="row g-4 table-responsive-sm">
+                <div class="row g-4 table-responsive wow fadeInUp" data-wow-delay="0.1s">
+                    <?php if (isset($_GET['err'])) {
+                        echo '<div class="col-12">
+                                    <div class="alert alert-danger wow fadeInUp" data-wow-delay="0.3s">' . urldecode(base64_decode($_GET['err'])) . '</div>
+                                </div>';
+                    }
+                    if (isset($_GET['success'])) {
+                        echo '<div class="col-12">
+                                        <div class="alert alert-success wow fadeInUp" data-wow-delay="0.3s">' . urldecode(base64_decode($_GET['success'])) . '</div>
+                                    </div>';
+                    } ?>
                     <table class="table text-nowrap">
+                        <?php
+                        $row = $conn->prepare("SELECT b.*, r.*, rt.name AS room_type, b.id AS booking_id  FROM rooms r 
+                        JOIN bookings b ON r.admin_id = b.hotel_id AND r.id = b.room_id
+                        JOIN room_types rt ON rt.id = r.type
+                        WHERE b.hotel_id = ? OR b.hotel_id = ? ORDER BY b.id DESC");
+                        $row->bind_param("ss", $id, $unique);
+                        ?>
                         <thead>
                             <tr>
                                 <td>SN</td>
+                                <td>Ref. Number</td>
                                 <td>Client Name</td>
                                 <td>Email</td>
+                                <td>Phone</td>
                                 <td>Room Type</td>
                                 <td>Bed Type</td>
                                 <td>No of Rooms</td>
                                 <td>Check in</td>
                                 <td>Check out</td>
-                                <td>Days</td>
                                 <td>Status</td>
-                                <td>Action</td>
+                                <?php if ($_SESSION['_role'] == 1) { ?>
+                                    <td>Action</td>
+                                <?php } ?>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
+                            <?php
+                            if ($row->execute()) {
+                                $row->execute();
+                                $result = $row->get_result();
+
+                                foreach ($result as $key => $value) {
+                                    echo '
+                                    <tr>
+                                        <td>' . ++$key . '</td>
+                                        <td>' . $value['ref_code'] . '</td>
+                                        <td>' . $value['name'] . '</td>
+                                        <td>' . $value['email'] . '</td>
+                                        <td>' . $value['phone'] . '</td>
+                                        <td>' . $value['room_type'] . '</td>
+                                        <td>' . $value['bed_type'] . '</td>
+                                        <td>' . $value['no_of_rooms'] . '</td>
+                                        <td>' . $value['check_in'] . '</td>
+                                        <td>' . $value['check_out'] . '</td>
+                                        <td>' . $value['is_paid'] . '</td>';
+                                    if ($_SESSION['_role'] == 1) {
+                                        echo '<td>
+                                            <a href="../controller/app.php?action=confirm_payment&ref=' . $value['ref_code'] . '&id=' . base64_encode($value['booking_id']) . '" class="btn btn-sm btn-outline-primary">Confirm Payment</a>
+                                            <a href="../controller/app.php?action=cancel_booking&ref=' . $value['ref_code'] . '&id=' . base64_encode($value['booking_id']) . '" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                        </td>';
+                                    }
+                                    echo '
+                                    </tr>';
+                                }
+                            } else {
+                                echo '
+                                    <tr>
+                                        <td>No Bookings Found!</td>
+                                    </tr>';
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>

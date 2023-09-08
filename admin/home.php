@@ -67,10 +67,10 @@ if ($_SESSION['_role'] != 1) {
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
+                            <a href="hotel.php" class="nav-item nav-link">My Hotel</a>
                             <a href="home.php" class="nav-item nav-link active">Room Types</a>
                             <a href="rooms.php" class="nav-item nav-link">Rooms</a>
                             <a href="bookings.php" class="nav-item nav-link">Bookings</a>
-                            <a href="contact.php" class="nav-item nav-link">Contact</a>
                         </div>
                         <a href="../controller/app.php?action=logout" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">LOGOUT<i class="fa fa-arrow-right ms-3"></i></a>
                     </div>
@@ -83,7 +83,8 @@ if ($_SESSION['_role'] != 1) {
     <main class="container py-5 mt-5">
         <?php
         $id = $_SESSION['_id'];
-        $sql = $conn->prepare("SELECT * FROM users WHERE id = ?");
+        $sql = $conn->prepare("SELECT u.*, h.name AS hotel_name FROM users u
+        JOIN hotels h ON h.admin_id = u.unique_id WHERE u.id = ?");
         $sql->bind_param('s', $id);
         $sql->execute();
         $arr = $sql->get_result();
@@ -113,7 +114,7 @@ if ($_SESSION['_role'] != 1) {
                                 if (isset($_GET['action']) && $_GET['action'] == 'edit_room_type') {
                                     $room_type = base64_decode($_GET['id']);
                                     $sql = $conn->prepare("SELECT * FROM room_types WHERE id = ?");
-                                    $sql->bind_param('i', $room_type);
+                                    $sql->bind_param('s', $room_type);
                                     $sql->execute();
                                     $arr = $sql->get_result();
                                     $value = $arr->fetch_assoc();
@@ -159,9 +160,9 @@ if ($_SESSION['_role'] != 1) {
 
                             <table class="table table-hover">
                                 <?php
-                                $id = $_SESSION['_id'];
+                                $id = $_SESSION['_unique_id'];
                                 $row = $conn->prepare("SELECT * FROM room_types WHERE admin_id = ? ORDER BY id DESC");
-                                $row->bind_param("i", $id);
+                                $row->bind_param("s", $id);
                                 ?>
                                 <thead>
                                     <tr>
@@ -185,7 +186,7 @@ if ($_SESSION['_role'] != 1) {
                                         <td>' . $value['code'] . '</td>
                                         <td>
                                             <a href="home.php?action=edit_room_type&id=' . base64_encode($value['id']) . '" class="btn btn-sm btn-outline-primary">Edit</a>
-                                            <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                            <a href="../controller/app.php?action=delete_room_type&id=' . base64_encode($value['id']) . '" class="btn btn-sm btn-outline-danger">Delete</a>
                                         </td>
                                     </tr>';
                                         }

@@ -13,7 +13,7 @@ include "controller/dbconfig.php";
         <?php
         $hotel_id = $_GET['hotel_id'];
         $room_id = $_GET['room_id'];
-        $sql = $conn->prepare("SELECT h.name AS hotel_name, rt.name AS type_name FROM rooms r
+        $sql = $conn->prepare("SELECT h.name AS hotel_name, rt.name AS type_name, r.available AS rooms_available, r.photo AS photo FROM rooms r
         JOIN hotels h ON r.admin_id = h.admin_id
         JOIN room_types rt ON rt.id = r.type WHERE r.admin_id = ? AND r.id = ?");
         $sql->bind_param('ss', $hotel_id, $room_id);
@@ -62,7 +62,10 @@ include "controller/dbconfig.php";
                     } ?>
                     <div class="col-lg-6">
                         <div class="row g-3">
-                            <div class="col-6 text-end">
+                            <div class="col-12">
+                                <img class="img-fluid rounded wow zoomIn" data-wow-delay="0.1s" src="img/<?php echo $value['photo'] ?>">
+                            </div>
+                            <!-- <div class="col-6 text-end">
                                 <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.1s" src="img/about-1.jpg" style="margin-top: 25%;">
                             </div>
                             <div class="col-6 text-start">
@@ -73,12 +76,12 @@ include "controller/dbconfig.php";
                             </div>
                             <div class="col-6 text-start">
                                 <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.7s" src="img/about-4.jpg">
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div class="wow fadeInUp" data-wow-delay="0.2s">
-                            <form action="controller/app.php?action=book_room&hotel_id=<?php echo $hotel_id .'&room_id=' . $room_id; ?>" method="POST">
+                            <form action="controller/app.php?action=book_room&hotel_id=<?php echo $hotel_id . '&room_id=' . $room_id; ?>" method="POST">
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">
@@ -136,7 +139,7 @@ include "controller/dbconfig.php";
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-floating">
-                                            <input required type="number" name="rooms_total" class="form-control" id="rooms_total" placeholder="Number of rooms" />
+                                            <input required type="number" name="rooms_total" class="form-control" min="1" max="<?php echo $value['rooms_available']; ?>" id="rooms_total" placeholder="Number of rooms" />
                                             <label for="rooms_total">Number of Rooms</label>
                                         </div>
                                     </div>
@@ -156,6 +159,7 @@ include "controller/dbconfig.php";
                 </div>
             </div>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqU2c4zU6S5jfkJcCgmR/5iqd5foF7Vo3+5I6cL5fydjAg5H3KkvKcF5fF6" crossorigin="anonymous"></script>
         <!-- Booking End -->
 
 

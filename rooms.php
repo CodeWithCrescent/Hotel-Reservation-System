@@ -39,52 +39,6 @@ include "controller/dbconfig.php";
         </div>
         <!-- Page Header End -->
 
-
-        <!-- Booking Start -->
-        <div class="container-fluid booking pb-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container">
-                <div class="bg-white shadow" style="padding: 35px;">
-                    <div class="row g-2">
-                        <div class="col-md-10">
-                            <div class="row g-2">
-                                <div class="col-md-3">
-                                    <div class="date" id="date1" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" placeholder="Check in" data-target="#date1" data-toggle="datetimepicker" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="date" id="date2" data-target-input="nearest">
-                                        <input type="text" class="form-control datetimepicker-input" placeholder="Check out" data-target="#date2" data-toggle="datetimepicker" />
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option selected>Adult</option>
-                                        <option value="1">Adult 1</option>
-                                        <option value="2">Adult 2</option>
-                                        <option value="3">Adult 3</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <select class="form-select">
-                                        <option selected>Child</option>
-                                        <option value="1">Child 1</option>
-                                        <option value="2">Child 2</option>
-                                        <option value="3">Child 3</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-primary w-100">Submit</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Booking End -->
-
-
         <!-- Room Start -->
         <div class="container-xxl py-5">
             <div class="container">
@@ -92,14 +46,23 @@ include "controller/dbconfig.php";
                     <h6 class="section-title text-center text-primary text-uppercase">Our Rooms</h6>
                     <h1 class="mb-5">Explore Our <span class="text-primary text-uppercase">Rooms</span></h1>
                 </div>
-                <div class="row g-4">
-                    <?php
+                <div id="results" class="row g-4">
+                    <?php if (isset($_GET['err'])) {
+                        echo '<div class="col-12">
+                                    <div class="alert alert-danger wow fadeInUp" data-wow-delay="0.3s">' . urldecode(base64_decode($_GET['err'])) . '</div>
+                                </div>';
+                    }
+                    if (isset($_GET['success'])) {
+                        echo '<div class="col-12">
+                                        <div class="alert alert-success wow fadeInUp" data-wow-delay="0.3s">' . urldecode(base64_decode($_GET['success'])) . '</div>
+                                    </div>';
+                    }
                     if (isset($_GET['hotel_id'])) {
                         $hotel_id = $_GET['hotel_id'];
 
                         $sql = $conn->prepare("SELECT r.*, t.name AS type_name FROM rooms r
                         LEFT JOIN room_types t ON t.id = r.type WHERE r.admin_id = ?");
-                        $sql->bind_param('i', $hotel_id);
+                        $sql->bind_param('s', $hotel_id);
                         $sql->execute();
                         $arr = $sql->get_result();
 
@@ -108,7 +71,7 @@ include "controller/dbconfig.php";
                         <div class="room-item shadow rounded overflow-hidden">
                             <div class="position-relative">
                                 <img class="img-fluid" src="img/' . $value['photo'] . '" alt="">
-                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">' . $value['price'] . '/- Tshs/Night</small>
+                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">Tshs. ' . number_format($value['price'], 2) . '/Night</small>
                             </div>
                             <div class="p-4 mt-2">
                                 <div class="d-flex justify-content-between mb-3">
@@ -123,12 +86,16 @@ include "controller/dbconfig.php";
                                 </div>
                                 <div class="d-flex mb-3">
                                     <small class="border-end me-3 pe-3"><i class="fa fa-bed text-primary me-2"></i>' . $value['bed_type'] . ' Room</small>
-                                    <small class="border-end me-3 pe-3"><i class="fa fa-bath text-primary me-2"></i>2 Bath</small>
+                                    <small class="border-end me-3 pe-3"><i class="fa fa-bath text-primary me-2"></i>Bath</small>
                                     <small><i class="fa fa-wifi text-primary me-2"></i>Wifi</small>
                                 </div>
+                                <div class="d-flex mb-3">
+                                    <small><i class="fa fa-hotel text-primary me-2"></i>' . ($value['available'] == 0 ? 'No' : $value['available']) . ' Available Rooms</small>
+                                </div>
                                 <p class="text-body mb-3">' . $value['description'] . '</p>
-                                <div class="d-flex justify-content-end">
-                                    <a class="btn btn-sm btn-dark rounded py-2 px-4" href="booking.php?hotel_id='.$hotel_id.'&room_id=' . $value['id'] . '">Book Now</a>
+                                <div class="d-flex justify-content-end">';
+                            $msg = base64_encode(urldecode('No rooms available to book in ' . $value['type_name'] . ', try another room.'));
+                            echo '<a class="btn btn-sm btn-dark rounded py-2 px-4" href="' . ($value['available'] == 0 ? 'rooms.php?hotel_id=' . $hotel_id . '&err=' . $msg : 'booking.php?hotel_id=' . $hotel_id . '&room_id=' . $value['id']) . '">Book Now</a>
                                 </div>
                             </div>
                         </div>
@@ -150,6 +117,38 @@ include "controller/dbconfig.php";
     </div>
 
     <?php include "includes/scripts.php"; ?>
+
+    <script>
+        $(document).ready(function() {
+            // Handle the search button click event
+            $("#search-btn").click(function(e) {
+                e.preventDefault();
+                // Get user input values
+                var checkin = $("#checkin").val();
+                var checkout = $("#checkout").val();
+                var adults = $("#adults").val();
+                var children = $("#child").val();
+                var hotel_id = '<?php echo $hotel_id; ?>';
+
+                // Send an AJAX request to the server
+                $.ajax({
+                    url: "controller/app.php?action=search_room", // The URL to your server-side script
+                    method: "POST",
+                    data: {
+                        checkin: checkin,
+                        checkout: checkout,
+                        adults: adults,
+                        children: children,
+                        hotel_id: hotel_id
+                    },
+                    success: function(response) {
+                        // Update the results div with the response
+                        $("#results").html(response);
+                    }
+                });
+            });
+        });
+    </script>
 
 </body>
 

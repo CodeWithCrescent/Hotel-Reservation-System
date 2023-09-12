@@ -76,6 +76,7 @@ include "../controller/dbconfig.php";
                                     <a href="home.php" class="nav-item nav-link">Room Types</a>
                                     <a href="rooms.php" class="nav-item nav-link">Rooms</a>
                                     <a href="bookings.php" class="nav-item nav-link active">Bookings</a>
+                                    <a href="setting.php" class="nav-item nav-link">Settings</a>
                                 <?php } ?>
                             </div>
                             <a href="../controller/app.php?action=logout" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">LOGOUT<i class="fa fa-arrow-right ms-3"></i></a>
@@ -165,11 +166,21 @@ include "../controller/dbconfig.php";
                                         <td>' . $value['no_of_rooms'] . '</td>
                                         <td>' . $value['check_in'] . '</td>
                                         <td>' . $value['check_out'] . '</td>
-                                        <td>' . $value['is_paid'] . '</td>';
+                                        <td>';
+                                    if ($value['is_paid'] === 0) {
+                                        echo 'Not Paid';
+                                    } elseif ($value['is_paid'] == 1) {
+                                        echo 'Paid';
+                                    }
+                                    echo '</td>';
                                     if ($_SESSION['_role'] == 1) {
-                                        echo '<td>
-                                            <a href="../controller/app.php?action=confirm_payment&ref=' . $value['ref_code'] . '&id=' . base64_encode($value['booking_id']) . '" class="btn btn-sm btn-outline-primary">Confirm Payment</a>
-                                            <a href="../controller/app.php?action=cancel_booking&ref=' . $value['ref_code'] . '&id=' . base64_encode($value['booking_id']) . '" class="btn btn-sm btn-outline-danger">Cancel</a>
+                                        echo '<td>';
+                                        if ($value['is_paid'] === 1) {
+                                            echo '<a href="#" class="btn btn-sm btn-outline-primary">Confirm Payment</a>';
+                                        } elseif ($value['is_paid'] === 0) {
+                                            echo '<a href="../controller/app.php?action=confirm_payment&ref=' . $value['ref_code'] . '&id=' . base64_encode($value['booking_id']) . '" class="btn btn-sm btn-outline-primary">Confirm Payment</a>';
+                                        }
+                                        echo '<a href="../controller/app.php?action=cancel_booking&ref=' . $value['ref_code'] . '&id=' . base64_encode($value['booking_id']) . '" class="btn btn-sm btn-outline-danger">Cancel</a>
                                         </td>';
                                     }
                                     echo '

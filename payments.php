@@ -1,111 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php include "includes/head.php"; ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Invoice</title>
+</head>
 
 <body>
-    <div class="container-xxl bg-white p-0">
-    <?php include "includes/header.php"; ?>
+    <div style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px;">
+        <div style="max-width: 650px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <div style="background-color: #0f172bff; padding: 3px;">
+                <h2 style="text-align: center; color: #fea116ff;">' . $app_name . '</h2>
+                <h3 style="text-align: center; color: #fff; margin-bottom: 10px;"><strong>Hill View Hotel - Booking Invoice</strong></h3>
+            </div><br>
 
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 45%; padding: 10px;">
+                        <p style="margin-bottom: 5px; color: #000;"><strong>Ref. Number:</strong> #' . $ref_code . '</p>
+                        <p style="margin-bottom: 5px; color: #000;"><strong>Booked Room:</strong> ' . $room_name . '</p>
+                        <p style="margin-bottom: 5px; color: #000;"><strong>Number of Rooms:</strong> ' . $rooms_total . '</p>
+                        <p style="margin-bottom: 5px; color: #000;"><strong>Payment Status:</strong> <span style="background-color: #fea116ff; color: #fff; padding: 3px 7px; border-radius: 5px;">Not Paid</span></p>
+                    </td>
+                    <td style="border-left: 1px solid #ccc; width: 50%; padding: 10px; padding-left: 3%;">
+                        <p style="margin-bottom: 5px; text-align: left; color: #000;"><span style="font-weight: bold;">Name: </span> ' . $name . '</p>
+                        <p style="margin-bottom: 5px; text-align: left; color: #000;"><span style="font-weight: bold;">Email: </span> ' . $email . '</p>
+                        <p style="margin-bottom: 5px; text-align: left; color: #000;"><span style="font-weight: bold;">Check In: </span> ' . $checkinFormatted . '</p>
+                        <p style="text-align: left; color: #000;"><span style="font-weight: bold;">Check Out: </span> ' . $checkoutFormatted . '</p>
+                    </td>
+                </tr>
+            </table>
+            <div style="margin-top: 20px; padding: 10px;">
+                <p style="color: #000; margin: 5px 0; font-style: italic; font-weight: lighter; font-size: large;">Payment Methods:</p>
+                <div style="display:flex;">
+                    <img src="https://www.transparentpng.com/download/payment-method/KWM0Hm-payment-method-bitcoin-photo.png" alt="PayPal" style="width: 60%; height: 80px; margin-right: 0px;">
+                    <img src="https://seeklogo.com/images/T/tigo-logo-F189442F6A-seeklogo.com.png" alt="TigoPesa" style="width: 35px; height: 25px; margin: 30px 5px;">
+                    <img src="http://halopesa.co.tz/static/1d8f7bc9a7487108a67e883871340ddf/e43a9/halopesa-logo.png" alt="HaloPesa" style="width: 87px; height: 32px; margin: 25px 5px;">
+                    <img src="https://seeklogo.com/images/M/m-pesa-logo-E658B5D192-seeklogo.com.png" alt="M-Pesa" style="width: 70px; height: 25px; margin: 30px 5px;">
+                </div>
+                <p style="color: #000; font-size: small;">We accept all other payment methods. Please use your <strong>Reference number</strong> for payments.</p>
+            </div>
 
-        <!-- Page Header Start -->
-        <div class="container-fluid page-header mb-5 p-0" style="background-image: url(img/carousel-1.jpg);">
-            <div class="container-fluid page-header-inner py-5">
-                <div class="container text-center pb-5">
-                    <h1 class="display-3 text-white mb-3 animated slideInDown">Booking</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb justify-content-center text-uppercase">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                            <li class="breadcrumb-item text-white active" aria-current="page">Booking</li>
-                        </ol>
-                    </nav>
+            <div style="margin-top: 20px; padding: 10px;">
+                <div style="padding: 10px 0; overflow: hidden; border-top: 1px solid grey;">
+                    <span style="font-weight: bold; float: left;">Account:</span>
+                    <span style="font-weight: normal; float: right;"> ' . $account_number . '  (' . $bank . ')</span>
+                </div>
+                <div style="padding: 10px 0; overflow: hidden; border-top: 1px solid grey;">
+                    <span style="font-weight: bold; float: left;">Price Per Room:</span>
+                    <span style="font-weight: normal; float: right;">Tshs.' . $price . '.00/-</span>
+                </div>
+                <div style="padding: 10px 0; overflow: hidden; border-top: 1px solid grey;">
+                    <span style="font-weight: bold; float: left;">Total:</span>
+                    <span style="font-weight: normal; float: right;">Tshs.' . $total_price . '.00/-</span>
                 </div>
             </div>
-        </div>
-        <!-- Page Header End -->
 
-
-        <!-- Payments Start -->
-        <div class="container-xxl py-5">
-            <div class="container">
-                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                    <h6 class="section-title text-center text-primary text-uppercase">Room Booking</h6>
-                    <h1 class="mb-5">Make Payment for <span class="text-primary text-uppercase">Luxury Room</span></h1>
-                </div>
-                <div class="row g-5">
-                    <div class="col-lg-6">
-                        <div class="row g-3">
-                            <div class="col-6 text-end">
-                                <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.1s"
-                                    src="img/about-1.jpg" style="margin-top: 25%;">
-                            </div>
-                            <div class="col-6 text-start">
-                                <img class="img-fluid rounded w-100 wow zoomIn" data-wow-delay="0.3s"
-                                    src="img/about-2.jpg">
-                            </div>
-                            <div class="col-6 text-end">
-                                <img class="img-fluid rounded w-50 wow zoomIn" data-wow-delay="0.5s"
-                                    src="img/about-3.jpg">
-                            </div>
-                            <div class="col-6 text-start">
-                                <img class="img-fluid rounded w-75 wow zoomIn" data-wow-delay="0.7s"
-                                    src="img/about-4.jpg">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="wow fadeInUp" data-wow-delay="0.2s">
-                            <form>
-                                <div class="row g-3">
-                                    <div class="col-md-12">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="name" placeholder="Your Name">
-                                            <label for="name">Name on Card</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="phone" placeholder="Your Card Number">
-                                            <label for="phone">Card Number</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="email"
-                                                placeholder="CVV">
-                                            <label for="email">CVV</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-floating date" id="date3" data-target-input="nearest">
-                                            <input type="text" class="form-control datetimepicker-input" id="expiry"
-                                                placeholder="Exipiration Date" data-target="#date3"
-                                                data-toggle="datetimepicker" />
-                                            <label for="expiry">Expiration Date</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <button class="btn btn-primary w-100 py-3" type="submit">PROCEED TO PAYMENT</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+            <p style="text-align: center; color: #000;">Thank you for booking with us! For any help [ <span style="color: #5d9fc5;">' . $hotel_email . '</span> ]</p>
+            <div style="text-align: center;">
+                <a href="http://localhost/workbench/hotel/controller/app.php?action=cancel_booking&ref=' . $ref_code . '" style="color: #5d9fc5; text-decoration: none;">Cancel Booking</a>
             </div>
         </div>
-        <!-- Booking End -->
-
-
-        <?php include "includes/footer.php"; ?>
-
-
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
     </div>
-
-    <?php include "includes/scripts.php"; ?>
 </body>
 
 </html>

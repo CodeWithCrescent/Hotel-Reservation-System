@@ -6,7 +6,10 @@ if (!isset($_SESSION['_id'])) {
     header("location: index.php");
     exit();
 }
-if ($_SESSION['_role'] != 0) {
+if ($_SESSION['_role'] == 1) {
+    header("location: home.php");
+    exit();
+} elseif ($_SESSION['_role'] != 0) {
     echo '<script>window.history.back();</script>';
     exit();
 }
@@ -48,12 +51,11 @@ if ($_SESSION['_role'] != 0) {
 </head>
 
 <body>
-
     <!-- ======= Header ======= -->
     <div class="container-fluid fixed-top bg-dark px-0">
         <div class="row gx-0">
             <div class="col-lg-3 bg-dark d-none d-lg-block">
-                <a href="dashboard.php" class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
+                <a href="<?php echo $_SESSION['_role'] == 0 ? 'dashboard.php' : 'home.php'; ?>" class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
                     <h1 class="m-0 text-primary text-uppercase">Reservio</h1>
                 </a>
             </div>
@@ -67,10 +69,7 @@ if ($_SESSION['_role'] != 0) {
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                         <div class="navbar-nav mr-auto py-0">
-                            <a href="dashboard.php" class="nav-item nav-link active">Admins</a>
-                            <a href="about.php" class="nav-item nav-link">About</a>
-                            <a href="service.php" class="nav-item nav-link">Services</a>
-                            <a href="contact.php" class="nav-item nav-link">Contact</a>
+                            <!-- Navbar Items -->
                         </div>
                         <a href="../controller/app.php?action=logout" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">LOGOUT<i class="fa fa-arrow-right ms-3"></i></a>
                     </div>
@@ -105,7 +104,8 @@ if ($_SESSION['_role'] != 0) {
                                 <?php
                                 if (isset($_GET['action']) && $_GET['action'] == 'edit_admin') {
                                     $admin_id = $_GET['id'];
-                                    $sql = $conn->prepare("SELECT * FROM users WHERE id = ?");
+                                    $sql = $conn->prepare("SELECT u.*, h.name AS hotel_name FROM users u
+                                    JOIN hotels h ON h.admin_id = u.unique_id WHERE u.unique_id = ?");
                                     $sql->bind_param('s', $admin_id);
                                     $sql->execute();
                                     $arr = $sql->get_result();
@@ -161,7 +161,8 @@ if ($_SESSION['_role'] != 0) {
                             <table class="table table-hover">
                                 <?php
                                 $role = 1;
-                                $row = $conn->prepare("SELECT * FROM users WHERE role = ? ORDER BY id DESC");
+                                $row = $conn->prepare("SELECT u.*,h.name AS hotel_name FROM users u
+                                JOIN hotels h ON h.admin_id = u.unique_id WHERE role = ? ORDER BY u.id DESC");
                                 $row->bind_param("i", $role);
                                 ?>
                                 <thead>
@@ -170,7 +171,7 @@ if ($_SESSION['_role'] != 0) {
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Hotel</th>
-                                        <th>Action</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -186,9 +187,10 @@ if ($_SESSION['_role'] != 0) {
                                         <td>' . $value['name'] . '</td>
                                         <td>' . $value['email'] . '</td>
                                         <td>' . $value['hotel_name'] . '</td>
-                                        <td>
-                                            <a href="dashboard.php?action=edit_admin&id=' . $value['id'] . '" class="btn btn-sm btn-outline-primary">Edit</a>
-                                            <button class="btn btn-sm btn-outline-secondary">Disable</button>
+                                        <td class="text-center">
+                                            <a href="dashboard.php?action=edit_admin&id=' . $value['unique_id'] . '" class="btn btn-sm btn-outline-primary">Edit</a>
+                                            <a href="../controller/app.php?action=disable_admin&id=' . $value['unique_id'] . '&name='.$value['hotel_name'].'&status='.(($value['is_enabled'] == 1) ? 0 : 1).'" class="btn btn-sm btn-outline-secondary">'.(($value['is_enabled'] == 1) ? 'Disable' : 'Enable').'</a>
+                                            <a href="bookings.php?id=' . $value['unique_id'] . '" class="btn btn-sm btn-outline-info">View Bookings</a>
                                         </td>
                                     </tr>';
                                         }

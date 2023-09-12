@@ -71,6 +71,7 @@ if ($_SESSION['_role'] != 1) {
                             <a href="home.php" class="nav-item nav-link active">Room Types</a>
                             <a href="rooms.php" class="nav-item nav-link">Rooms</a>
                             <a href="bookings.php" class="nav-item nav-link">Bookings</a>
+                            <a href="setting.php" class="nav-item nav-link">Settings</a>
                         </div>
                         <a href="../controller/app.php?action=logout" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">LOGOUT<i class="fa fa-arrow-right ms-3"></i></a>
                     </div>
@@ -120,7 +121,6 @@ if ($_SESSION['_role'] != 1) {
                                     $value = $arr->fetch_assoc();
                                     if ($value) {
                                         $name = $value['name'];
-                                        $code = $value['code'];
                                     } else {
                                         $name = '';
                                         $code = '';
@@ -137,16 +137,10 @@ if ($_SESSION['_role'] != 1) {
                                         <div class="alert alert-success">' . urldecode(base64_decode($_GET['success'])) . '</div>
                                     </div>';
                                 } ?>
-                                <div class="col-md-6">
+                                <div class="col-md-10">
                                     <div class="form-floating">
                                         <input type="text" class="form-control" value="<?php echo isset($_GET['action']) == 'edit_room_type' ? $name : '' ?>" name="room_type" id="floatingName" placeholder="Enter Room Type Name">
                                         <label for="floatingName">Room Type Name</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" value="<?php echo isset($_GET['action']) == 'edit_room_type' ? $code : '' ?>" name="room_type_code" id="roomTypeCode" placeholder="Enter Room Type Code">
-                                        <label for="roomTypeCode">Room Type Code</label>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
@@ -168,7 +162,6 @@ if ($_SESSION['_role'] != 1) {
                                     <tr>
                                         <th>SN</th>
                                         <th>Name</th>
-                                        <th>Code</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -183,7 +176,6 @@ if ($_SESSION['_role'] != 1) {
                                     <tr>
                                         <td>' . ++$key . '</td>
                                         <td>' . $value['name'] . '</td>
-                                        <td>' . $value['code'] . '</td>
                                         <td>
                                             <a href="home.php?action=edit_room_type&id=' . base64_encode($value['id']) . '" class="btn btn-sm btn-outline-primary">Edit</a>
                                             <a href="../controller/app.php?action=delete_room_type&id=' . base64_encode($value['id']) . '" class="btn btn-sm btn-outline-danger">Delete</a>

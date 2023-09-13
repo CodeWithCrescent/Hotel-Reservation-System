@@ -19,16 +19,16 @@
                     <div class="col-12">
                         <div class="row gy-4">
                             <div class="col-md-4">
-                                <h6 class="section-title text-start text-primary text-uppercase">Booking</h6>
-                                <p><i class="fa fa-envelope-open text-primary me-2"></i>book@example.com</p>
+                                <h6 class="section-title text-start text-primary text-uppercase">New Hotels</h6>
+                                <p><i class="fa fa-envelope-open text-primary me-2"></i>hotel@hotel-resevio.com</p>
                             </div>
                             <div class="col-md-4">
                                 <h6 class="section-title text-start text-primary text-uppercase">General</h6>
-                                <p><i class="fa fa-envelope-open text-primary me-2"></i>info@example.com</p>
+                                <p><i class="fa fa-envelope-open text-primary me-2"></i>info@hotel-resevio.com</p>
                             </div>
                             <div class="col-md-4">
                                 <h6 class="section-title text-start text-primary text-uppercase">Technical</h6>
-                                <p><i class="fa fa-envelope-open text-primary me-2"></i>tech@example.com</p>
+                                <p><i class="fa fa-envelope-open text-primary me-2"></i>tech@hotel-resevio.com</p>
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="wow fadeInUp" data-wow-delay="0.2s">
-                            <form>
+                            <form action="">
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">

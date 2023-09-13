@@ -21,19 +21,26 @@ if (isset($_POST['login'])) {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
-            // SESSIONS
-            foreach ($user as $key => $value) {
-                if ($key != 'password' && !is_numeric($key)) {
-                    $_SESSION['_' . $key] = $value;
+            if ($user['is_enabled'] == 1) {
+                // SESSIONS
+                foreach ($user as $key => $value) {
+                    if ($key != 'password' && !is_numeric($key)) {
+                        $_SESSION['_' . $key] = $value;
+                    }
                 }
-            }
 
-            if ($_SESSION['_role'] == 0) {
-                header('location: ../admin/dashboard.php');
-            } elseif ($_SESSION['_role'] == 1) {
-                header('location: ../admin/home.php');
+                if ($_SESSION['_role'] == 0) {
+                    header('location: ../admin/dashboard.php');
+                } elseif ($_SESSION['_role'] == 1) {
+                    header('location: ../admin/hotel.php');
+                } else {
+                    echo 'User ';
+                }
             } else {
-                echo 'User ';
+                $msg = urlencode('Your account is disabled. Contact system admin for help!');
+                $err = base64_encode($msg);
+                header('location: ../admin/index.php?err=' . $err);
+                exit;
             }
         } else {
             $msg = urlencode('Invalid Email or Password!');

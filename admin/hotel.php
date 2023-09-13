@@ -71,6 +71,7 @@ if ($_SESSION['_role'] != 1) {
                             <a href="home.php" class="nav-item nav-link">Room Types</a>
                             <a href="rooms.php" class="nav-item nav-link">Rooms</a>
                             <a href="bookings.php" class="nav-item nav-link">Bookings</a>
+                            <a href="setting.php" class="nav-item nav-link">Settings</a>
                         </div>
                         <a href="../controller/app.php?action=logout" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block">LOGOUT<i class="fa fa-arrow-right ms-3"></i></a>
                     </div>
@@ -127,15 +128,25 @@ if ($_SESSION['_role'] != 1) {
                                     </div>
                                 </div>
                                 <div class="d-flex mb-3">
-                                    <!-- <small class="border-end me-3 pe-3"><i class="fa fa-bed text-primary me-2"></i>3 Bed</small>
-                                    <small class="border-end me-3 pe-3"><i class="fa fa-bath text-primary me-2"></i>2
-                                        Bath</small>
-                                    <small><i class="fa fa-wifi text-primary me-2"></i>Wifi</small> -->
+                                    <small class="border-end me-3 pe-3">
+                                        <i class="fa fa-briefcase text-primary me-2"></i>
+                                        <?php echo $value['acc_number']; ?>
+                                    </small>
+                                    <small class="border-end me-3 pe-3">
+                                        <i class="fa fa-university text-primary me-2"></i>
+                                        <?php echo $value['bank']; ?>
+                                    </small>
+                                    <small>
+                                        <i class="fa fa-envelope text-primary me-2"></i>
+                                        <?php echo $value['email']; ?>
+                                    </small>
+
                                 </div>
                                 <p class="text-body mb-3"><?php echo $value['description']; ?></p>
                                 <div class="d-flex justify-content-between">
                                     <a class="btn btn-sm btn-secondary rounded py-2 px-4" href="hotel.php?action=edit_hotel&hotel_id=<?php echo $value['admin_id']; ?>">Edit Hotel</a>
-                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="../controller/app.php?action=publish_hotel&hotel_id=<?php echo $value['admin_id'].'&status='; echo base64_encode($value['is_published'] == 0 ? 1 : 0); ?>"><?php echo $value['is_published'] == 0 ? 'Publish' : 'Deactivate'; ?></a>
+                                    <a class="btn btn-sm btn-primary rounded py-2 px-4" href="../controller/app.php?action=publish_hotel&hotel_id=<?php echo $value['admin_id'] . '&status=';
+                                                                                                                                                    echo base64_encode($value['is_published'] == 0 ? 1 : 0); ?>"><?php echo $value['is_published'] == 0 ? 'Publish' : 'Deactivate'; ?></a>
                                 </div>
                             </div>
                         </div>
@@ -158,6 +169,9 @@ if ($_SESSION['_role'] != 1) {
                                             $value = $arr->fetch_assoc();
                                             if ($value) {
                                                 $name = $value['name'];
+                                                $acc_number = $value['acc_number'];
+                                                $bank = $value['bank'];
+                                                $email = $value['email'];
                                                 $photo = $value['photo'];
                                                 $description = $value['description'];
                                             } else {
@@ -175,6 +189,24 @@ if ($_SESSION['_role'] != 1) {
                                             <div class="form-floating">
                                                 <input type="text" class="form-control" value="<?php echo isset($_GET['action']) == 'edit_hotel' ? $name : '' ?>" name="name" id="floatingName" placeholder="Enter hotel name">
                                                 <label for="floatingName">Hotel Name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                <input type="number" class="form-control" value="<?php echo isset($_GET['action']) == 'edit_hotel' ? $acc_number : '' ?>" name="account_number" id="floatingAccountNumber" placeholder="Enter hotel account number">
+                                                <label for="floatingAccountNumber">Account Number</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" value="<?php echo isset($_GET['action']) == 'edit_hotel' ? $bank : '' ?>" name="bank" id="floatingBank" placeholder="Enter hotel account bank name">
+                                                <label for="floatingBank">Bank</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating">
+                                                <input type="email" class="form-control" value="<?php echo isset($_GET['action']) == 'edit_hotel' ? $email : '' ?>" name="email" id="floatingEmail" placeholder="Enter hotel support email">
+                                                <label for="floatingEmail">Hotel Email</label>
                                             </div>
                                         </div>
                                         <div class="col-md-5">

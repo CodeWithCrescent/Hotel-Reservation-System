@@ -10,7 +10,7 @@ require 'mail/PHPMailer.php';
 require 'mail/SMTP.php';
 
 $mail_from = 'crescentbeatz31@gmail.com';
-$app_password = 'zhgodcvdhajiemer';
+$app_password = '*************';
 $app_name = 'RESERVIO | Hotel Reservation System';
 
 $mail = new PHPMailer(true);
